@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "69245969081",
+    "firebase_url": "https://makeitso-61ebd-default-rtdb.firebaseio.com",
+    "project_id": "makeitso-61ebd",
+    "storage_bucket": "makeitso-61ebd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69245969081:android:d22b02010e3eae6e923168",
+        "android_client_info": {
+          "package_name": "com.bagusrizki.delapanjayafarm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAodZbPwIWDDLJ6xilIXhAgQRzhuG8_1f0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69245969081:android:da6db2280dd9e4f0923168",
+        "android_client_info": {
+          "package_name": "com.example.delapanjayafarm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAodZbPwIWDDLJ6xilIXhAgQRzhuG8_1f0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

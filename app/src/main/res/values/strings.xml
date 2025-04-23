@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Delapan Jaya Farm</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_admin">AdminActivity</string>
+    <string name="title_activity_add_admin">AddAdminActivity</string>
+    <string name="title_activity_edit_admin">EditAdminActivity</string>
+    <string name="title_activity_add_mitra">AddMitraActivity</string>
+    <string name="title_activity_edit_mitra">EditMitraActivity</string>
+    <string name="title_activity_add_jadwal">AddJadwalActivity</string>
+    <string name="title_activity_edit_jadwal">EditJadwalActivity</string>
+    <string name="title_activity_add_sapi">AddSapiActivity</string>
+    <string name="title_activity_log">LogActivity</string>
+    <string name="title_activity_set_harga">SetHargaActivity</string>
+    <string name="title_activity_konfirmasi_pemesanan">KonfirmasiPemesananActivity</string>
+</resources>
