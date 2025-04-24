@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -27,6 +28,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,6 +51,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.bagusrizki.delapanjayafarm.R
+import com.bagusrizki.delapanjayafarm.data.BobotSapi
+import com.bagusrizki.delapanjayafarm.data.Sapi
 import com.bagusrizki.delapanjayafarm.data.SapiDetail
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.SapiViewModel
 import java.text.SimpleDateFormat
@@ -72,6 +76,10 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
 
     val showDetail = remember { mutableStateOf(false) }
     val expandUpdateSapi = remember { mutableStateOf<Boolean>(false) }
+
+    val bobotList = sapi.bobot.sortedByDescending { it.tanggal }
+
+    var showDeleteDialog = remember { mutableStateOf(false) }
 
 
     Row(
@@ -199,7 +207,9 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                             }
 
                             Column(
-                                modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp)
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .padding(top = 12.dp)
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -297,7 +307,7 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Button(
                                         onClick = {
-
+                                            showDeleteDialog.value = true
                                         },
                                         shape = RoundedCornerShape(4.dp),
                                         modifier = Modifier.height(34.dp),
@@ -311,7 +321,8 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                                 if (expandUpdateSapi.value) {
                                     Spacer(modifier = Modifier.height(8.dp))
                                     var expandedStatus by remember { mutableStateOf(false) }
-                                    val statusOptions = listOf("Siap Jual", "Sakit", "Proses")
+                                    val statusOptions =
+                                        listOf("Siap Jual", "Sakit", "Proses", "Terjual")
 
                                     var statusSapi by remember { mutableStateOf(sapi.statusSapi) }
                                     var bobotSapi by remember { mutableStateOf("") }
@@ -321,7 +332,6 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                                         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
                                             Date()
                                         )
-
 
                                     ExposedDropdownMenuBox(
                                         expanded = expandedStatus,
@@ -371,9 +381,33 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                                         modifier = Modifier.fillMaxWidth()
                                     )
 
+                                    Spacer(modifier = Modifier.height(8.dp))
                                     Button(
                                         onClick = {
                                             loading = true
+
+                                            val sapiUpdateData: Sapi = Sapi(
+                                                sapi.idSapi,
+                                                sapi.idMitra,
+                                                sapi.namaSapi,
+                                                sapi.jenisSapi,
+                                                sapi.tanggalPemeliharaan,
+                                                sapi.imageSapi,
+                                                statusSapi,
+                                                sapi.keteranganSapi
+                                            )
+
+                                            sapiViewModel.updateSapi(sapiUpdateData)
+
+                                            val bobotValue = bobotSapi.toIntOrNull()
+                                            if (bobotValue != null && bobotValue > 0) {
+                                                val addBobotSapi = BobotSapi(
+                                                    idSapi = sapi.idSapi,
+                                                    bobot = bobotValue.toString(),
+                                                    tanggal = tanggalUpdateBobot
+                                                )
+                                                sapiViewModel.addBobot(addBobotSapi)
+                                            }
 
                                             loading = false
                                             expandUpdateSapi.value = false
@@ -411,9 +445,11 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                                 )
                             }
                         }
-                        items(sapi.bobot) { bobot ->
+                        items(bobotList) { bobot ->
                             Row(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 4.dp),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -436,6 +472,38 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                 }
             }
         }
+    }
+
+    if (showDeleteDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog.value = false },
+            title = {
+                Text(text = "Konfirmasi Hapus")
+            },
+            text = {
+                Text(text = "Apakah Anda yakin ingin menghapus Sapi ${sapi.namaSapi}?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        // delete admin from firebase
+                        sapiViewModel.deleteSapi(Sapi(sapi.idSapi))
+
+                        showDeleteDialog.value = false
+                    },
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Hapus")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDeleteDialog.value = false }
+                ) {
+                    Text("Batal")
+                }
+            }
+        )
     }
 }
 

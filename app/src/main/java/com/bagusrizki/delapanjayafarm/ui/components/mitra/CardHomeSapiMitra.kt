@@ -43,11 +43,14 @@ fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = view
     val sapiSakit = listSapi.filter { it.statusSapi == "Sakit" }
     val sapiSiapJual = listSapi.filter { it.statusSapi == "Siap Jual" }
     val sapiProses = listSapi.filter { it.statusSapi == "Proses" }
+    val sapiTerjual = listSapi.filter { it.statusSapi == "Terjual" }
+
 
     val jumlahSapi = listSapi.size
     val jumlahSapiSakit = sapiSakit.size
     val jumlahSapiSiapJual = sapiSiapJual.size
     val jumlahProses = sapiProses.size
+    val jumlahTerjual = sapiTerjual.size
 
     Card(
         colors = CardDefaults.cardColors(
@@ -112,9 +115,26 @@ fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = view
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconBottom(jumlah = jumlahSapiSiapJual.toString(), label = "Siap Jual", intentLabel  = "Siap Jual")
-                IconBottom(jumlah = jumlahSapiSakit.toString(), label = "Sedang Sakit", intentLabel  = "Sakit")
-                IconBottom(jumlah = jumlahProses.toString(), label = "Dalam Proses", intentLabel  = "Proses")
+               IconBottom(
+                    jumlah = jumlahSapiSiapJual.toString(),
+                    label = "Siap Jual",
+                    intentLabel = "Siap Jual"
+                )
+                IconBottom(
+                    jumlah = jumlahSapiSakit.toString(),
+                    label = "Sakit",
+                    intentLabel = "Sakit"
+                )
+                IconBottom(
+                    jumlah = jumlahProses.toString(),
+                    label = "Proses",
+                    intentLabel = "Proses"
+                )
+                IconBottom(
+                    jumlah = jumlahTerjual.toString(),
+                    label = "Terjual",
+                    intentLabel = "Terjual"
+                )
             }
         }
     }
@@ -127,7 +147,7 @@ fun IconBottom(jumlah: String, label: String, intentLabel:String) {
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.width(100.dp),
+        modifier = Modifier.width(76.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(

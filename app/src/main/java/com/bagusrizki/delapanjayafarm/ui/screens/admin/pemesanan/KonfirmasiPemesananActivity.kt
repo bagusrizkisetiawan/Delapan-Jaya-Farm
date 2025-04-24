@@ -128,112 +128,117 @@ fun KonfirmasiPemesanan(
             Column(
                 modifier = Modifier
                     .padding(it)
-                    .padding(horizontal = 16.dp),
+                    .padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
 
+
                 pemesananDetail?.let { CardPemesanan(it) } ?: Text("Data tidak ditemukan")
 
-                ExposedDropdownMenuBox(
-                    expanded = expandedStatus,
-                    onExpandedChange = { expandedStatus = !expandedStatus }
-                ) {
-                    OutlinedTextField(
-                        readOnly = true,
-                        value = statusPemesanan,
-                        onValueChange = {},
-                        label = { Text("Jenis Pemesanan") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedStatus) },
-                        modifier = Modifier
-                            .menuAnchor()
-                            .fillMaxWidth()
-                    )
-                    ExposedDropdownMenu(
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    ExposedDropdownMenuBox(
                         expanded = expandedStatus,
-                        onDismissRequest = { expandedStatus = false }
+                        onExpandedChange = { expandedStatus = !expandedStatus }
                     ) {
-                        statusOptions.forEach { status ->
-                            DropdownMenuItem(
-                                text = { Text(status) },
-                                onClick = {
-                                    statusPemesanan = status
-                                    expandedStatus = false
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-
-                OutlinedTextField(
-                    value = tanggalEstimasi,
-                    onValueChange = {},
-                    label = { Text("Tanggal Estimasi") },
-                    readOnly = true,
-                    trailingIcon = {
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(
-                                imageVector = Icons.Filled.DateRange,
-                                contentDescription = "Pilih Tanggal"
-                            )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                if (showDatePicker) {
-                    val context = LocalContext.current
-                    val calendar = Calendar.getInstance()
-                    val datePicker = DatePickerDialog(
-                        context,
-                        { _, year, month, dayOfMonth ->
-                            val formattedDate = "$year-${month + 1}-$dayOfMonth"
-                            tanggalEstimasi = formattedDate
-                            showDatePicker = false
-                        },
-                        calendar.get(Calendar.YEAR),
-                        calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)
-                    )
-                    datePicker.show()
-                }
-
-                Button(
-                    onClick = {
-                        loading = true
-
-                        pemesananDetail?.let {
-                            pemesananViewModel.updatePemesanan(
-                                PemesananPakan(
-                                    idPemesanan = it.idPemesanan,
-                                    jenisPemesanan = it.jenisPemesanan,
-                                    keteranganPemesanan = it.keteranganPemesanan,
-                                    idMitra = it.idMitra,
-                                    tanggalPemesanan = it.tanggalPemesanan,
-                                    statusPemesanan = statusPemesanan,
-                                    estimasiPemesanan = tanggalEstimasi
-                                )
-                            )
-                            loading = false
-                            onBackPressed()
-                        } ?: run {
-                            loading = false
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp)
-                ) {
-                    if (loading) {
-                        CircularProgressIndicator(modifier = Modifier.width(16.dp))
-                    } else {
-                        Text(
-                            "Simpan",
-                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
-                            modifier = Modifier.padding(8.dp)
+                        OutlinedTextField(
+                            readOnly = true,
+                            value = statusPemesanan,
+                            onValueChange = {},
+                            label = { Text("Jenis Pemesanan") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedStatus) },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
                         )
+                        ExposedDropdownMenu(
+                            expanded = expandedStatus,
+                            onDismissRequest = { expandedStatus = false }
+                        ) {
+                            statusOptions.forEach { status ->
+                                DropdownMenuItem(
+                                    text = { Text(status) },
+                                    onClick = {
+                                        statusPemesanan = status
+                                        expandedStatus = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = tanggalEstimasi,
+                        onValueChange = {},
+                        label = { Text("Tanggal Estimasi") },
+                        readOnly = true,
+                        trailingIcon = {
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(
+                                    imageVector = Icons.Filled.DateRange,
+                                    contentDescription = "Pilih Tanggal"
+                                )
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    if (showDatePicker) {
+                        val context = LocalContext.current
+                        val calendar = Calendar.getInstance()
+                        val datePicker = DatePickerDialog(
+                            context,
+                            { _, year, month, dayOfMonth ->
+                                val formattedDate = "$year-${month + 1}-$dayOfMonth"
+                                tanggalEstimasi = formattedDate
+                                showDatePicker = false
+                            },
+                            calendar.get(Calendar.YEAR),
+                            calendar.get(Calendar.MONTH),
+                            calendar.get(Calendar.DAY_OF_MONTH)
+                        )
+                        datePicker.show()
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = {
+                            loading = true
+
+                            pemesananDetail?.let {
+                                pemesananViewModel.updatePemesanan(
+                                    PemesananPakan(
+                                        idPemesanan = it.idPemesanan,
+                                        jenisPemesanan = it.jenisPemesanan,
+                                        keteranganPemesanan = it.keteranganPemesanan,
+                                        idMitra = it.idMitra,
+                                        tanggalPemesanan = it.tanggalPemesanan,
+                                        statusPemesanan = statusPemesanan,
+                                        estimasiPemesanan = tanggalEstimasi
+                                    )
+                                )
+                                loading = false
+                                onBackPressed()
+                            } ?: run {
+                                loading = false
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
+                        if (loading) {
+                            CircularProgressIndicator(modifier = Modifier.width(16.dp))
+                        } else {
+                            Text(
+                                "Simpan",
+                                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
                     }
                 }
+
             }
 
         }

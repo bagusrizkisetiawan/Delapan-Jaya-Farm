@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bagusrizki.delapanjayafarm.data.Admin
 import com.bagusrizki.delapanjayafarm.data.Mitra
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.EditAdminActivity
@@ -36,7 +37,7 @@ import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.EditMitraActivity
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.UsersViewModel
 
 @Composable
-fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = UsersViewModel()) {
+fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = viewModel()) {
     val context = LocalContext.current // Ambil konteks dari Compose
 
     var isExpanded = remember { mutableStateOf(false) }
@@ -121,9 +122,7 @@ fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = UsersViewModel()) {
             confirmButton = {
                 Button(
                     onClick = {
-                        // delete admin from firebase
                         usersViewModel.deleteAdmin(admin)
-
                         showDeleteDialog.value = false
                     },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
@@ -144,8 +143,8 @@ fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = UsersViewModel()) {
 
 
 @Composable
-fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = UsersViewModel()) {
-    val context = LocalContext.current // Ambil konteks dari Compose
+fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = viewModel()) {
+    val context = LocalContext.current
 
     var isExpanded = remember { mutableStateOf(false) }
     var showDeleteDialog = remember { mutableStateOf(false) }
@@ -157,7 +156,6 @@ fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = UsersViewModel()) {
                 isExpanded.value = !isExpanded.value
             }
             .padding(horizontal = 18.dp, vertical = 12.dp)
-
     ) {
         Button(
             onClick = {},
@@ -168,7 +166,7 @@ fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = UsersViewModel()) {
         Spacer(modifier = Modifier.width(12.dp))
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.weight(1f) // Pastikan Column mengambil sisa ruang di Row
+            modifier = Modifier.weight(1f)
         ) {
             Text(
                 text = mitra.nama,
@@ -180,33 +178,52 @@ fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = UsersViewModel()) {
                 color = Color.Gray,
             )
             if (isExpanded.value) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(bottom = 8.dp, top = 4.dp)
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Button(
-                        onClick = {
-                            showDeleteDialog.value = true
-                        },
-                        shape = RoundedCornerShape(4.dp),
-                        modifier = Modifier.height(34.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                    Text(
+                        text = "No Hp : ${mitra.noHp}",
+                        fontSize = 14.sp,
+                    )
+                    Text(
+                        text = "Jumlah Sapi : 2",
+                        fontSize = 14.sp,
+                    )
+
+                    Text(
+                        text = "Alamat : ${mitra.alamat}",
+                        fontSize = 14.sp,
+                    )
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(bottom = 8.dp, top = 4.dp)
                     ) {
-                        Text(text = "Hapus", fontSize = 12.sp)
-                    }
-                    Button(
-                        onClick = {
-                            val intent = Intent(context, EditMitraActivity::class.java)
-                            intent.putExtra("mitraId", mitra.id)
-                            context.startActivity(intent)
-                        },
-                        shape = RoundedCornerShape(4.dp),
-                        modifier = Modifier.height(34.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
-                    ) {
-                        Text(text = "Edit", fontSize = 12.sp)
+                        Button(
+                            onClick = {
+                                showDeleteDialog.value = true
+                            },
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier.height(34.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                        ) {
+                            Text(text = "Hapus", fontSize = 12.sp)
+                        }
+                        Button(
+                            onClick = {
+                                val intent = Intent(context, EditMitraActivity::class.java)
+                                intent.putExtra("mitraId", mitra.id)
+                                context.startActivity(intent)
+                            },
+                            shape = RoundedCornerShape(4.dp),
+                            modifier = Modifier.height(34.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+                        ) {
+                            Text(text = "Edit", fontSize = 12.sp)
+                        }
                     }
                 }
+
             }
         }
         Icon(
@@ -229,9 +246,7 @@ fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = UsersViewModel()) {
             confirmButton = {
                 Button(
                     onClick = {
-                        // delete admin from firebase
                         usersViewModel.deleteMitra(mitra)
-
                         showDeleteDialog.value = false
                     },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)

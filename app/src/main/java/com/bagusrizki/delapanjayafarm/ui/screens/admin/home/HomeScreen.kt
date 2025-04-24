@@ -172,9 +172,10 @@ fun CardHarga(harga : Int){
                 Text(
                     text = "Harga Sapi Saat Ini", fontSize = 14.sp,
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Rp ${"%,d".format(harga)}",
-                    fontSize = 24.sp,
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.SemiBold
                 )
 

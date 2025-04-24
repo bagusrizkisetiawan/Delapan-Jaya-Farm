@@ -58,6 +58,7 @@ class SapiViewModel : ViewModel() {
                     data.getValue(Mitra::class.java)?.apply { id = data.key ?: "" }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -69,6 +70,7 @@ class SapiViewModel : ViewModel() {
                     data.getValue(Sapi::class.java)?.apply { idSapi = data.key ?: "" }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -80,6 +82,7 @@ class SapiViewModel : ViewModel() {
                     data.getValue(BobotSapi::class.java)?.apply { idBobotSapi = data.key ?: "" }
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -87,8 +90,10 @@ class SapiViewModel : ViewModel() {
     private fun readHargaSapi() {
         databaseHargaSapi.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                _listHargaSapi.value = snapshot.children.mapNotNull { data -> data.getValue(HargaSapi::class.java) }
+                _listHargaSapi.value =
+                    snapshot.children.mapNotNull { data -> data.getValue(HargaSapi::class.java) }
             }
+
             override fun onCancelled(error: DatabaseError) {}
         })
     }
@@ -132,5 +137,15 @@ class SapiViewModel : ViewModel() {
 
     fun updateHargaSapi(hargaSapi: HargaSapi) {
         databaseHargaSapi.child("-OJLwqbTep0JAw7RsRmc").setValue(hargaSapi)
+    }
+
+    fun updateSapi(sapi: Sapi) {
+        if (sapi.idSapi.isNotEmpty()) {
+            databaseSapi.child(sapi.idSapi).setValue(sapi)
+        }
+    }
+
+    fun deleteSapi(sapi: Sapi) {
+        databaseSapi.child(sapi.idSapi).removeValue()
     }
 }
