@@ -33,7 +33,7 @@ import com.bagusrizki.delapanjayafarm.R
 import com.bagusrizki.delapanjayafarm.ui.components.admin.ItemJadwal
 
 @Composable
-fun JawalScreen(jadwalViewModel: JadwalViewModel = viewModel()) {
+fun JadwalScreen(jadwalViewModel: JadwalViewModel = viewModel()) {
     val context = LocalContext.current
 
     // Data

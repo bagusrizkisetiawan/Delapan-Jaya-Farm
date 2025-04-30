@@ -20,6 +20,16 @@
         android:theme="@style/Theme.DelapanJayaFarm"
         tools:targetApi="31">
         <activity
+            android:name=".ui.screens.mitra.jadwal.LogMitraActivity"
+            android:exported="false"
+            android:label="@string/title_activity_log_mitra"
+            android:theme="@style/Theme.DelapanJayaFarm" />
+        <activity
+            android:name=".ui.screens.mitra.home.SapiMitraActivity"
+            android:exported="false"
+            android:label="@string/title_activity_sapi_mitra"
+            android:theme="@style/Theme.DelapanJayaFarm" />
+        <activity
             android:name=".ui.screens.admin.pemesanan.KonfirmasiPemesananActivity"
             android:exported="false"
             android:label="@string/title_activity_konfirmasi_pemesanan"

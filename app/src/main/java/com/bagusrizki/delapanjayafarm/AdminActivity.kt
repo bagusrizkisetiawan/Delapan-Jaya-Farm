@@ -39,7 +39,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bagusrizki.delapanjayafarm.data.UserLogin
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.HomeScreen
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.AddJadwalActivity
-import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.JawalScreen
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.JadwalScreen
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.pemesanan.PemesananScreen
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.profile.ProfileScreen
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.UsersScreen
@@ -65,7 +65,10 @@ fun MainAdminScreen(adminViewModel: AdminViewModel = AdminViewModel()) {
 
     // navigation
     val navController = rememberNavController()
-    val currentRoute = navController.currentBackStackEntryAsState()?.value?.destination?.route
+    // observe current route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
 
     // context
     val context = LocalContext.current
@@ -132,10 +135,11 @@ fun NavigationHost(
         startDestination = "home",
         modifier = modifier
     ) {
-        composable("home") { HomeScreen(userLogin) }
+        composable("home") { HomeScreen(userLogin, navController = navController) }
         composable("users") { UsersScreen() }
-        composable("jawal") { JawalScreen() }
+        composable("jadwal") { JadwalScreen() }
         composable("pemesanan") { PemesananScreen() }
+        composable("pemesananFromHome") { PemesananScreen() }
         composable("profile") { ProfileScreen() }
     }
 }
@@ -183,7 +187,7 @@ sealed class NavigationItem(
 ) {
     object Home : NavigationItem("home", Icons.Filled.Home, "Home")
     object Users : NavigationItem("users", Icons.Filled.Person, "Pengguna")
-    object Jadwals : NavigationItem("jawal", Icons.Filled.Notifications, "Jadwal")
+    object Jadwals : NavigationItem("jadwal", Icons.Filled.Notifications, "Jadwal")
     object Pesan : NavigationItem("pemesanan", Icons.Filled.Email, "Pesan")
     object Profile : NavigationItem("profile", Icons.Filled.AccountCircle, "Profil")
 }

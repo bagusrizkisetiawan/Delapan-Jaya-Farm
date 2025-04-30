@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -19,6 +20,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,10 +59,15 @@ fun PemesananScreenMitra(
 
     // Data
     val pemesananDetailList by pemesananViewModel.pemesananDetailList.collectAsState()
-    val pemesananDetailListByIdMItra = pemesananDetailList.filter { it.idMitra == userLogin.id }
+    val pemesananDetailListByIdMItra =
+        pemesananDetailList.filter { it.idMitra == userLogin.id }.sortedByDescending {
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it.tanggalPemesanan)
+        }
     val isLoading = pemesananDetailListByIdMItra.isEmpty()
 
-    android.util.Log.d("pemesananDetailList", pemesananDetailList.toString())
+    var showEmptyJenisAlert by remember { mutableStateOf(false) }
+
+//    android.util.Log.d("pemesananDetailList", pemesananDetailList.toString())
 
     Column(
         modifier = Modifier.padding(horizontal = 18.dp),
@@ -70,7 +77,7 @@ fun PemesananScreenMitra(
             text = "Pemesanan Pakan",
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(vertical = 18.dp)
+            modifier = Modifier.padding(top = 18.dp, bottom = 16.dp)
         )
 
         LazyColumn {
@@ -120,16 +127,23 @@ fun PemesananScreenMitra(
                         onClick = {
                             loading = true
 
-                            pemesananViewModel.addPemesanan(
-                                PemesananPakan(
-                                    jenisPemesanan = jenisPemesanan,
-                                    keteranganPemesanan = keterangan,
-                                    idMitra = userLogin.id,
-                                    tanggalPemesanan = tanggalPemesanan,
-                                    statusPemesanan = "Menunggu",
-                                    estimasiPemesanan = "-"
+                            if (jenisPemesanan.isBlank()) {
+                                showEmptyJenisAlert = true
+                            } else {
+                                pemesananViewModel.addPemesanan(
+                                    PemesananPakan(
+                                        jenisPemesanan = jenisPemesanan,
+                                        keteranganPemesanan = keterangan,
+                                        idMitra = userLogin.id,
+                                        tanggalPemesanan = tanggalPemesanan,
+                                        statusPemesanan = "Menunggu",
+                                        estimasiPemesanan = "-"
+                                    )
                                 )
-                            )
+
+                                jenisPemesanan = ""
+                                keterangan = ""
+                            }
 
                             loading = false
                         },
@@ -161,7 +175,12 @@ fun PemesananScreenMitra(
             // Display the list of jadwal
             if (isLoading) {
                 item {
-                    Box(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         CircularProgressIndicator()
                     }
                 }
@@ -172,6 +191,17 @@ fun PemesananScreenMitra(
             }
         }
 
-
+        if (showEmptyJenisAlert) {
+            AlertDialog(
+                onDismissRequest = { showEmptyJenisAlert = false },
+                title = { Text("Jenis Pakan Kosong") },
+                text = { Text("Silakan pilih atau isi jenis pemesanan pakan terlebih dahulu.") },
+                confirmButton = {
+                    TextButton(onClick = { showEmptyJenisAlert = false }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
     }
 }

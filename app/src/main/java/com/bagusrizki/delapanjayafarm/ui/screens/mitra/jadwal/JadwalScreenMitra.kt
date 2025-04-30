@@ -71,7 +71,7 @@ fun JawalScreenMitra(userLogin:Mitra, jadwalViewModel: JadwalMitraViewModel = vi
                 contentDescription = null,
                 modifier = Modifier
                     .clickable {
-                        val intent = Intent(context, LogActivity::class.java)
+                        val intent = Intent(context, LogMitraActivity::class.java)
                         context.startActivity(intent) // Mulai activity baru
                     }
                     .size(24.dp),

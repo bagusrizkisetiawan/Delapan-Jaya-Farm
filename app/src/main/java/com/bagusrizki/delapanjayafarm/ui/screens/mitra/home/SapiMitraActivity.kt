@@ -1,4 +1,4 @@
-package com.bagusrizki.delapanjayafarm.ui.screens.admin.home
+package com.bagusrizki.delapanjayafarm.ui.screens.mitra.home
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -44,11 +44,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bagusrizki.delapanjayafarm.UserPreferences
 import com.bagusrizki.delapanjayafarm.data.SapiDetail
 import com.bagusrizki.delapanjayafarm.ui.components.admin.ItemSapi
+import com.bagusrizki.delapanjayafarm.ui.components.mitra.ItemSapiMitra
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.AddSapiActivity
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.SapiViewModel
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.ui.theme.DelapanJayaFarmTheme
 
-class SapiActivity : ComponentActivity() {
+class SapiMitraActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -68,28 +72,43 @@ class SapiActivity : ComponentActivity() {
 fun SapiScreen(
     onBackPressed: () -> Unit = {},
     intentLabel: String = "",
-    sapiViewModel: SapiViewModel= viewModel()
+    sapiMitraViewModel: SapiMitraViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
-    val sapiDetailList = sapiViewModel.sapiDetailList.collectAsState()
-    val hargaSapi = sapiViewModel.listHargaSapi.collectAsState()
+    var idUserLogin by remember { mutableStateOf("") }
+
+    // preference user
+    val userPreferences = UserPreferences(context)
+
+    val userId by userPreferences.userIdFlow.collectAsState(initial = null)
+    val userLevel by userPreferences.userLevelFlow.collectAsState(initial = null)
+
+    LaunchedEffect(userId, userLevel) {
+        if (userId != null && userLevel != null) {
+            idUserLogin = userId as String
+        }
+    }
+
+    val sapiDetailList = sapiMitraViewModel.sapiDetailList.collectAsState()
+    val sapiDetailListByLogin = sapiDetailList.value.filter { it.idMitra == idUserLogin }
+//    val hargaSapi = sapiMitraViewModel.listHargaSapi.collectAsState()
 
     var searchText by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
-    var filteredSapiList by remember { mutableStateOf(sapiDetailList.value) }
+    var filteredSapiList by remember { mutableStateOf(sapiDetailListByLogin) }
 
     var selectedStatus by remember { mutableStateOf(intentLabel) }
 
-    LaunchedEffect(searchText, selectedStatus, sapiDetailList.value) {
-        filteredSapiList = sapiDetailList.value.filter { sapi ->
+    LaunchedEffect(searchText, selectedStatus, sapiDetailListByLogin) {
+        filteredSapiList = sapiDetailListByLogin.filter { sapi ->
             (searchText.isEmpty() || sapi.namaSapi.contains(searchText, ignoreCase = true)) &&
                     (selectedStatus.isEmpty() || sapi.statusSapi == selectedStatus)
         }
     }
 
     if (searchText.isEmpty() and selectedStatus.isEmpty()) {
-        filteredSapiList = sapiDetailList.value
+        filteredSapiList = sapiDetailListByLogin
     }
 
     val loadingList = filteredSapiList.isEmpty()
@@ -100,7 +119,7 @@ fun SapiScreen(
             Column {
                 TopAppBar(
                     title = {
-                        Text("Sapi dalam Peternakan", fontSize = 20.sp)
+                        Text("Sapi dalam kandang anda", fontSize = 20.sp)
                     },
                     navigationIcon = {
                         IconButton(onClick = { onBackPressed() }) {
@@ -165,7 +184,7 @@ fun SapiScreen(
             } else {
                 LazyColumn(modifier = Modifier.padding(top = 12.dp)) {
                     items(filteredSapiList) { sapi ->
-                        ItemSapi(sapi = sapi)
+                        ItemSapiMitra(sapi = sapi)
                     }
                 }
             }
@@ -214,8 +233,3 @@ fun SapiStatusLazyRow(
         }
     }
 }
-
-
-
-
-

@@ -1,5 +1,6 @@
 package com.bagusrizki.delapanjayafarm.ui.components.admin
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -32,9 +34,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bagusrizki.delapanjayafarm.data.Admin
 import com.bagusrizki.delapanjayafarm.data.Mitra
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.SapiViewModel
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.EditAdminActivity
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.EditMitraActivity
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.UsersViewModel
+import kotlinx.coroutines.flow.filter
 
 @Composable
 fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = viewModel()) {
@@ -42,6 +46,7 @@ fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = viewModel()) {
 
     var isExpanded = remember { mutableStateOf(false) }
     var showDeleteDialog = remember { mutableStateOf(false) }
+
 
     Row(
         modifier = Modifier
@@ -142,12 +147,15 @@ fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = viewModel()) {
 }
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = viewModel()) {
+fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = viewModel(),  sapiViewModel: SapiViewModel= viewModel()) {
     val context = LocalContext.current
 
     var isExpanded = remember { mutableStateOf(false) }
     var showDeleteDialog = remember { mutableStateOf(false) }
+
+    val sapiList = sapiViewModel.sapiList.collectAsState().value.filter { it.idMitra == mitra.id}
 
     Row(
         modifier = Modifier
@@ -186,7 +194,7 @@ fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = viewModel()) {
                         fontSize = 14.sp,
                     )
                     Text(
-                        text = "Jumlah Sapi : 2",
+                        text = "Jumlah Sapi : ${sapiList.size}",
                         fontSize = 14.sp,
                     )
 

@@ -3,6 +3,7 @@ package com.bagusrizki.delapanjayafarm.ui.components.admin
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -39,6 +41,9 @@ import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.ui.theme.DelapanJaya
 @Composable
 fun CardHomeSapi(sapiViewModel: SapiViewModel = viewModel()) {
     val context = LocalContext.current
+
+    val interactionSource = remember { MutableInteractionSource() }
+
 
     val listSapi = sapiViewModel.sapiList.collectAsState()
     val sapiSakit = listSapi.value.filter { it.statusSapi == "Sakit" }
@@ -86,10 +91,11 @@ fun CardHomeSapi(sapiViewModel: SapiViewModel = viewModel()) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier
-                        .clickable {
-                            // Membuat intent untuk berpindah ke AddMitraActivity
+                        .clickable(
+                            indication = null,
+                            interactionSource = interactionSource
+                        ) {
                             val intent = Intent(context, SapiActivity::class.java)
-                            // Memulai aktivitas baru
                             context.startActivity(intent)
                         }
                         .fillMaxWidth()
@@ -115,10 +121,26 @@ fun CardHomeSapi(sapiViewModel: SapiViewModel = viewModel()) {
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconBottom(jumlah = jumlahSapiSiapJual.toString(), label = "Siap Jual", intentLabel  = "Siap Jual")
-                IconBottom(jumlah = jumlahSapiSakit.toString(), label = "Sakit", intentLabel  = "Sakit")
-                IconBottom(jumlah = jumlahProses.toString(), label = "Proses", intentLabel  = "Proses")
-                IconBottom(jumlah = jumlahTerjual.toString(), label = "Terjual", intentLabel  = "Terjual")
+                IconBottom(
+                    jumlah = jumlahSapiSiapJual.toString(),
+                    label = "Siap Jual",
+                    intentLabel = "Siap Jual"
+                )
+                IconBottom(
+                    jumlah = jumlahSapiSakit.toString(),
+                    label = "Sakit",
+                    intentLabel = "Sakit"
+                )
+                IconBottom(
+                    jumlah = jumlahProses.toString(),
+                    label = "Proses",
+                    intentLabel = "Proses"
+                )
+                IconBottom(
+                    jumlah = jumlahTerjual.toString(),
+                    label = "Terjual",
+                    intentLabel = "Terjual"
+                )
             }
         }
     }
@@ -126,7 +148,7 @@ fun CardHomeSapi(sapiViewModel: SapiViewModel = viewModel()) {
 
 
 @Composable
-fun IconBottom(jumlah: String, label: String, intentLabel:String) {
+fun IconBottom(jumlah: String, label: String, intentLabel: String) {
 
     val context = LocalContext.current
 

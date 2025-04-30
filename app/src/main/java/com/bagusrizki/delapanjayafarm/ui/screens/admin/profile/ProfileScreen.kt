@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,15 +34,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bagusrizki.delapanjayafarm.LoginActivity
 import com.bagusrizki.delapanjayafarm.UserPreferences
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.users.EditMitraActivity
+import com.bagusrizki.delapanjayafarm.ui.screens.mitra.home.SapiMitraViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(
-    profileViewModel: ProfileViewModel = ProfileViewModel()) {
+    profileViewModel: ProfileViewModel = ProfileViewModel()
+) {
     val context = LocalContext.current // Ambil konteks dari Compose
 
     // Observasi data
@@ -51,6 +58,7 @@ fun ProfileScreen(
     val admin = adminList.find { it.id == userId }
 
     var isExpanded = remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -91,14 +99,7 @@ fun ProfileScreen(
                         text = "${admin?.username} (Admin)",
                         fontSize = 14.sp,
                     )
-                    if (isExpanded.value) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(bottom = 8.dp, top = 4.dp)
-                        ) {
 
-                        }
-                    }
                 }
                 Icon(
                     modifier = Modifier.padding(top = 12.dp),

@@ -1,8 +1,10 @@
 package com.bagusrizki.delapanjayafarm.ui.components.mitra
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,17 +36,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bagusrizki.delapanjayafarm.data.Mitra
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.home.SapiActivity
 import com.bagusrizki.delapanjayafarm.ui.screens.mitra.home.HomeMitraViewModel
+import com.bagusrizki.delapanjayafarm.ui.screens.mitra.home.SapiMitraActivity
+import com.bagusrizki.delapanjayafarm.ui.screens.mitra.home.SapiMitraViewModel
 
+@SuppressLint("RememberReturnType")
 @Composable
-fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = viewModel()) {
+fun CardHomeSapiMitra(userLogin: Mitra, sapiMitraViewModel: SapiMitraViewModel = viewModel()) {
     val context = LocalContext.current
 
-    val _listSapi = homeViewModel.sapiList.collectAsState()
+    val _listSapi = sapiMitraViewModel.sapiList.collectAsState()
     val listSapi = _listSapi.value.filter { it.idMitra == userLogin.id }
     val sapiSakit = listSapi.filter { it.statusSapi == "Sakit" }
     val sapiSiapJual = listSapi.filter { it.statusSapi == "Siap Jual" }
     val sapiProses = listSapi.filter { it.statusSapi == "Proses" }
     val sapiTerjual = listSapi.filter { it.statusSapi == "Terjual" }
+
+    val interactionSource = remember { MutableInteractionSource() }
 
 
     val jumlahSapi = listSapi.size
@@ -68,7 +76,7 @@ fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = view
                     .padding(top = 12.dp)
             ) {
                 Text(
-                    text = "Jumlah Sapi dalam peternakan",
+                    text = "Jumlah Sapi dalam kandang anda",
                     modifier = Modifier
                         .fillMaxWidth(),
                     fontSize = 12.sp,
@@ -86,10 +94,11 @@ fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = view
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier
-                        .clickable {
-                            // Membuat intent untuk berpindah ke AddMitraActivity
-                            val intent = Intent(context, SapiActivity::class.java)
-                            // Memulai aktivitas baru
+                        .clickable(
+                            indication = null,
+                            interactionSource = interactionSource
+                        ) {
+                            val intent = Intent(context, SapiMitraActivity::class.java)
                             context.startActivity(intent)
                         }
                         .fillMaxWidth()
@@ -115,7 +124,7 @@ fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = view
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-               IconBottom(
+                IconBottom(
                     jumlah = jumlahSapiSiapJual.toString(),
                     label = "Siap Jual",
                     intentLabel = "Siap Jual"
@@ -142,7 +151,7 @@ fun CardHomeSapiMitra(userLogin: Mitra, homeViewModel: HomeMitraViewModel = view
 
 
 @Composable
-fun IconBottom(jumlah: String, label: String, intentLabel:String) {
+fun IconBottom(jumlah: String, label: String, intentLabel: String) {
 
     val context = LocalContext.current
 
@@ -153,9 +162,7 @@ fun IconBottom(jumlah: String, label: String, intentLabel:String) {
         Card(
             modifier = Modifier
                 .clickable {
-                    // Membuat intent untuk berpindah ke AddMitraActivity
-                    val intent = Intent(context, SapiActivity::class.java)
-                    // Memulai aktivitas baru
+                    val intent = Intent(context, SapiMitraActivity::class.java)
                     intent.putExtra("status", intentLabel)
                     context.startActivity(intent)
                 }

@@ -12,4 +12,6 @@
     <string name="title_activity_log">LogActivity</string>
     <string name="title_activity_set_harga">SetHargaActivity</string>
     <string name="title_activity_konfirmasi_pemesanan">KonfirmasiPemesananActivity</string>
+    <string name="title_activity_sapi_mitra">SapiMitraActivity</string>
+    <string name="title_activity_log_mitra">LogMitraActivity</string>
 </resources>

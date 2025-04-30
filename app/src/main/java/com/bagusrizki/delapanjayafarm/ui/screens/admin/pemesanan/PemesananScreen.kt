@@ -52,14 +52,7 @@ fun PemesananScreen(pemesananViewModel: PemesananViewModel = viewModel()) {
 
         // Display the list of jadwal
         if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            Text("Belum ada pesanan")
         } else {
             LazyColumn(
             ) {

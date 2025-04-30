@@ -1,4 +1,4 @@
-package com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal
+package com.bagusrizki.delapanjayafarm.ui.screens.mitra.jadwal
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,17 +16,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bagusrizki.delapanjayafarm.UserPreferences
+import com.bagusrizki.delapanjayafarm.data.Mitra
+import com.bagusrizki.delapanjayafarm.data.UserLogin
 import com.bagusrizki.delapanjayafarm.ui.components.admin.ItemLog
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.JadwalViewModel
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.ui.theme.DelapanJayaFarmTheme
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class LogActivity : ComponentActivity() {
+class LogMitraActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,11 +51,26 @@ class LogActivity : ComponentActivity() {
 @Composable
 fun LogScreen(
     onBackPressed: () -> Unit = {},
-    jadwalViewModel: JadwalViewModel = viewModel()
+    jadwalViewModel: JadwalViewModel = JadwalViewModel()
 ) {
 
+    val context = LocalContext.current
+    var idUserLogin by remember { mutableStateOf("") }
+
+    // preference user
+    val userPreferences = UserPreferences(context)
+
+    val userId by userPreferences.userIdFlow.collectAsState(initial = null)
+    val userLevel by userPreferences.userLevelFlow.collectAsState(initial = null)
+
+    LaunchedEffect(userId, userLevel) {
+        if (userId != null && userLevel != null) {
+            idUserLogin = userId as String
+        }
+    }
+
     val logList = jadwalViewModel.logDetailList.collectAsState()
-    val logListSorted = logList.value.sortedBy { it.jadwal.jam }.sortedByDescending {
+    val logListSorted = logList.value.sortedBy { it.jadwal.jam }.filter { it.idMitra == idUserLogin }.sortedByDescending {
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it.tanggal)
     }
 

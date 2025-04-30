@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,22 +31,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bagusrizki.delapanjayafarm.LoginActivity
 import com.bagusrizki.delapanjayafarm.UserPreferences
 import com.bagusrizki.delapanjayafarm.data.Mitra
+import com.bagusrizki.delapanjayafarm.ui.screens.mitra.home.SapiMitraViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreenMitra(
-    userLogin : Mitra
+    userLogin : Mitra, sapiMitraViewModel: SapiMitraViewModel = viewModel()
 ) {
     val context = LocalContext.current // Ambil konteks dari Compose
 
     // Observasi data
     val userPreferences = UserPreferences(context)
 
+    val sapiList = sapiMitraViewModel.sapiList.collectAsState().value.filter { it.idMitra == userLogin.id}
 
     var isExpanded = remember { mutableStateOf(false) }
 
@@ -89,10 +93,25 @@ fun ProfileScreenMitra(
                         fontSize = 14.sp,
                     )
                     if (isExpanded.value) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.padding(bottom = 8.dp, top = 4.dp)
-                        ) {
+                        if (isExpanded.value) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    text = "No Hp : ${userLogin.noHp}",
+                                    fontSize = 14.sp,
+                                )
+                                Text(
+                                    text = "Jumlah Sapi : ${sapiList.size}",
+                                    fontSize = 14.sp,
+                                )
+
+                                Text(
+                                    text = "Alamat : ${userLogin.alamat}",
+                                    fontSize = 14.sp,
+                                )
+                            }
 
                         }
                     }

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.bagusrizki.delapanjayafarm.data.UserLogin
 import com.bagusrizki.delapanjayafarm.ui.components.admin.CardHomeSapi
 import com.bagusrizki.delapanjayafarm.ui.components.admin.ItemLog
@@ -42,7 +43,8 @@ import java.util.Locale
 fun HomeScreen(
     userLogin: UserLogin,
     homeViewModel: HomeViewModel = viewModel(),
-    sapiViewModel: SapiViewModel = viewModel()
+    sapiViewModel: SapiViewModel = viewModel(),
+    navController: NavController
 ) {
     val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
     val logDayList = homeViewModel.logDayList.collectAsState()
@@ -109,8 +111,14 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.height(36.dp)
+                        onClick = {
+                            navController.navigate("pemesananFromHome") {
+                                popUpTo("home") {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }, modifier = Modifier.height(36.dp)
                     ) {
                         Text(text = "Lihat Pesanan", fontSize = 12.sp)
                     }
@@ -147,15 +155,14 @@ fun HomeScreen(
 
 
 @Composable
-fun CardHarga(harga : Int){
+fun CardHarga(harga: Int) {
     val context = LocalContext.current
     Card(
         modifier = Modifier.clickable {
             val intent = Intent(context, SetHargaActivity::class.java)
             intent.putExtra("HARGA", harga)
             context.startActivity(intent)
-        },
-        colors = CardDefaults.cardColors(
+        }, colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         )

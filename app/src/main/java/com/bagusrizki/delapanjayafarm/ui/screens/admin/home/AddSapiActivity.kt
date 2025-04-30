@@ -155,7 +155,7 @@ fun AddSapiScreen(
     // Validation logic
     fun validateForm(): Boolean {
         return namaSapi.isNotEmpty() && selectedMitra.isNotEmpty() && jenisSapi.isNotEmpty() &&
-                bobotSapi.isNotEmpty() && statusSapi.isNotEmpty() && keteranganSapi.isNotEmpty()
+                bobotSapi.isNotEmpty() && statusSapi.isNotEmpty()
     }
 
     Scaffold(
