@@ -97,12 +97,12 @@ class PemesananViewModel:ViewModel() {
         })
     }
 
-    // Delete admin from Firebase
-    fun deleteAdmin(pemesananPakan: PemesananPakan) {
+    // Delete from Firebase
+    fun deletePemesanan(pemesananPakan: PemesananPakan) {
         databasePemesanan.child(pemesananPakan.idPemesanan).removeValue()
     }
 
-    // Update admin in Firebase
+    // Update  in Firebase
     fun updatePemesanan(pemesananPakan: PemesananPakan) {
         val pemesananId = pemesananPakan.idPemesanan
         if (pemesananId.isNotEmpty()) {

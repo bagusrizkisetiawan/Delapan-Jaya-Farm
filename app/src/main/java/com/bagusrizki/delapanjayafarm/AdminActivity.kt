@@ -101,11 +101,9 @@ fun MainAdminScreen(adminViewModel: AdminViewModel = AdminViewModel()) {
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) },
         floatingActionButton = {
-            // Tampilkan FAB hanya jika di layar "jawal"
-            if (currentRoute == "jawal") {
+            if (currentRoute == "jadwal") {
                 FloatingActionButton(
                     onClick = {
-                        // Membuat intent untuk berpindah ke AddJadwalActivity
                         val intent = Intent(context, AddJadwalActivity::class.java)
                         context.startActivity(intent)
                     }

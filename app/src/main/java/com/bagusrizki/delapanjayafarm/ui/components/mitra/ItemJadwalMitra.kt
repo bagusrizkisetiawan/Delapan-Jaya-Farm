@@ -51,6 +51,7 @@ fun ItemJadwalMitra(
     val context = LocalContext.current
 
     val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    val currentJam = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
     // Data
     val logList by jadwalViewModel.logDetailList.collectAsState()
@@ -146,7 +147,7 @@ fun ItemJadwalMitra(
                                 idMitra = userLogin.id,
                                 idJadwal = jadwal.id,
                                 tanggal = currentDate,
-                                jam = jadwal.jam,
+                                jam = currentJam,
                                 status = "Selesai"
                             )
                             jadwalViewModel.updateLog(log)

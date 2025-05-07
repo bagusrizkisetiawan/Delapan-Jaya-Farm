@@ -322,9 +322,10 @@ fun AddSapiScreen(
                 maxLines = 3,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp)
+                    .height(120.dp)
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
             Button(
                 onClick = {
                     // Validate the form before submitting

@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 fun ProfileScreenMitra(
     userLogin : Mitra, sapiMitraViewModel: SapiMitraViewModel = viewModel()
 ) {
-    val context = LocalContext.current // Ambil konteks dari Compose
+    val context = LocalContext.current
 
     // Observasi data
     val userPreferences = UserPreferences(context)

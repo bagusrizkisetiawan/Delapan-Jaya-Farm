@@ -148,4 +148,8 @@ class SapiViewModel : ViewModel() {
     fun deleteSapi(sapi: Sapi) {
         databaseSapi.child(sapi.idSapi).removeValue()
     }
+
+    fun deleteBobot(bobotSapi: BobotSapi) {
+        databaseBobotSapi.child(bobotSapi.idBobotSapi).removeValue()
+    }
 }

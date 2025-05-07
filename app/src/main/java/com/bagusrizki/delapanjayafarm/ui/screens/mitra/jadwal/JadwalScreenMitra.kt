@@ -72,7 +72,7 @@ fun JawalScreenMitra(userLogin:Mitra, jadwalViewModel: JadwalMitraViewModel = vi
                 modifier = Modifier
                     .clickable {
                         val intent = Intent(context, LogMitraActivity::class.java)
-                        context.startActivity(intent) // Mulai activity baru
+                        context.startActivity(intent)
                     }
                     .size(24.dp),
                 tint = MaterialTheme.colorScheme.onSurface,

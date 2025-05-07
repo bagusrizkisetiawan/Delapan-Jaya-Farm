@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -33,8 +35,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +52,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -93,7 +98,17 @@ fun KonfirmasiPemesanan(
     var statusPemesanan by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
 
+    LaunchedEffect(pemesananDetail) {
+        pemesananDetail?.statusPemesanan?.let {
+            statusPemesanan = it
+        }
+    }
+
     var loading by remember { mutableStateOf(false) }
+
+    var alertShow by remember { mutableStateOf(false) }
+
+    var showDelete by remember { mutableStateOf(false) }
 
 
     if (isLoading) {
@@ -202,10 +217,14 @@ fun KonfirmasiPemesanan(
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
-                        onClick = {
-                            loading = true
+                        onClick = onClick@{
+                            if (tanggalEstimasi.isEmpty() || statusPemesanan.isEmpty()) {
+                                alertShow = true
+                                return@onClick
+                            }
 
                             pemesananDetail?.let {
+                                loading = true
                                 pemesananViewModel.updatePemesanan(
                                     PemesananPakan(
                                         idPemesanan = it.idPemesanan,
@@ -220,7 +239,8 @@ fun KonfirmasiPemesanan(
                                 loading = false
                                 onBackPressed()
                             } ?: run {
-                                loading = false
+                                alertShow =
+                                    true
                             }
                         },
                         modifier = Modifier
@@ -231,17 +251,80 @@ fun KonfirmasiPemesanan(
                             CircularProgressIndicator(modifier = Modifier.width(16.dp))
                         } else {
                             Text(
-                                "Simpan",
+                                "Konfirmasi Pemesanan",
                                 style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
                                 modifier = Modifier.padding(8.dp)
                             )
                         }
                     }
-                }
 
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Atau",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = {
+                            showDelete = true
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(colorResource(R.color.danger))
+                    ) {
+                        Text(
+                            "Hapus Pemesanan",
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+            }
+
+            if (showDelete) {
+                AlertDialog(
+                    onDismissRequest = { showDelete = false },
+                    title = { Text("Konfirmasi Hapus") },
+                    text = { Text("Apakah Anda yakin ingin menghapus pemesanan ini?") },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            pemesananDetail?.let {
+                                val pemesanan: PemesananPakan = PemesananPakan(idPemesanan = it.idPemesanan)
+                                pemesananViewModel.deletePemesanan(pemesanan)
+                                onBackPressed()
+                            }
+                            showDelete = false
+                        }) {
+                            Text("Hapus")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDelete = false }) {
+                            Text("Batal")
+                        }
+                    }
+                )
+            }
+
+
+            if (alertShow) {
+                AlertDialog(
+                    onDismissRequest = { alertShow = false },
+                    title = { Text("Peringatan") },
+                    text = { Text("Pastikan semua kolom terisi.") },
+                    confirmButton = {
+                        TextButton(onClick = { alertShow = false }) {
+                            Text("OK")
+                        }
+                    }
+                )
             }
 
         }
+
     }
 }
 
@@ -313,3 +396,4 @@ fun CardPemesanan(pemesanan: PemesananDetail) {
 
     HorizontalDivider(thickness = 0.5.dp, color = Color.LightGray)
 }
+

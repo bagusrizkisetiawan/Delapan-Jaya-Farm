@@ -139,16 +139,6 @@ fun SapiScreen(
                     }
                 )
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val intent = Intent(context, AddSapiActivity::class.java)
-                    context.startActivity(intent)
-                }
-            ) {
-                Icon(Icons.Filled.Add, "Add")
-            }
         }
     ) { paddingValues ->
         Column(

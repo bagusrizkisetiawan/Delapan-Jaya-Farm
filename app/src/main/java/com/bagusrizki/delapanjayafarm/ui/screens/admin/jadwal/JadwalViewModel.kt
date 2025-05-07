@@ -87,6 +87,11 @@ class JadwalViewModel : ViewModel() {
         databaseJadwal.child(jadwal.id).removeValue()
     }
 
+    // Delete jadwal from Firebase
+    fun deleteLog(log: LogJadwal) {
+        databaseLog.child(log.idJadwal).removeValue()
+    }
+
     // Update jadwal in Firebase
     fun updateJadwal(jadwal: Jadwal) {
         if (jadwal.id.isNotEmpty()) {

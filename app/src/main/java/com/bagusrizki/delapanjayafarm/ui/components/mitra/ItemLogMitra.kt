@@ -51,6 +51,8 @@ fun ItemLogMitra(log: LogDetail, userLogin : Mitra, jadwalViewModel:JadwalMitraV
 
     val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
+    val curentJam = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
     var isExpanded = remember { mutableStateOf(false) }
 
     Column(
@@ -84,6 +86,7 @@ fun ItemLogMitra(log: LogDetail, userLogin : Mitra, jadwalViewModel:JadwalMitraV
                         else -> MaterialTheme.colorScheme.primary
                     },
                     contentColor = MaterialTheme.colorScheme.onPrimary
+
                 )
             ) {
 
@@ -151,7 +154,7 @@ fun ItemLogMitra(log: LogDetail, userLogin : Mitra, jadwalViewModel:JadwalMitraV
                                 idMitra = userLogin.id,
                                 idJadwal = log.idJadwal,
                                 tanggal = currentDate,
-                                jam = log.jam,
+                                jam = curentJam,
                                 status = "Selesai"
                             )
                             jadwalViewModel.updateLog(log)

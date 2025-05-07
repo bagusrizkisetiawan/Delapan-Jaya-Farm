@@ -53,7 +53,6 @@ fun LogScreen(
     onBackPressed: () -> Unit = {},
     jadwalViewModel: JadwalViewModel = JadwalViewModel()
 ) {
-
     val context = LocalContext.current
     var idUserLogin by remember { mutableStateOf("") }
 
@@ -74,13 +73,12 @@ fun LogScreen(
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it.tanggal)
     }
 
-
     Scaffold(
         topBar = {
             TopAppBar(
 
                 title = {
-                    Text("Aktivitas", fontSize = 20.sp)
+                    Text("Seluruh Aktivitas Anda", fontSize = 20.sp)
                 },
                 navigationIcon = {
                     //

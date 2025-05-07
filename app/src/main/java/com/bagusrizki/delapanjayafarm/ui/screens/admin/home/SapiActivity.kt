@@ -83,10 +83,18 @@ fun SapiScreen(
 
     LaunchedEffect(searchText, selectedStatus, sapiDetailList.value) {
         filteredSapiList = sapiDetailList.value.filter { sapi ->
-            (searchText.isEmpty() || sapi.namaSapi.contains(searchText, ignoreCase = true)) &&
-                    (selectedStatus.isEmpty() || sapi.statusSapi == selectedStatus)
+            val matchesSearch = searchText.isEmpty() || listOf(
+                sapi.namaSapi,
+                sapi.mitra?.nama.orEmpty(),
+                sapi.jenisSapi
+            ).any { it.contains(searchText, ignoreCase = true) }
+
+            val matchesStatus = selectedStatus.isEmpty() || sapi.statusSapi == selectedStatus
+
+            matchesSearch && matchesStatus
         }
     }
+
 
     if (searchText.isEmpty() and selectedStatus.isEmpty()) {
         filteredSapiList = sapiDetailList.value

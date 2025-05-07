@@ -35,8 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bagusrizki.delapanjayafarm.R
 import com.bagusrizki.delapanjayafarm.data.Jadwal
+import com.bagusrizki.delapanjayafarm.data.LogJadwal
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.EditJadwalActivity
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.JadwalViewModel
+import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.LogActivity
 import com.bagusrizki.delapanjayafarm.ui.screens.admin.jadwal.ui.theme.DelapanJayaFarmTheme
 
 @Composable
@@ -101,9 +103,9 @@ fun ItemJadwal(
             ) {
                 Button(
                     onClick = {
-//                   val intent = Intent(context, EditMitraActivity::class.java)
-//                   intent.putExtra("mitraId", mitra.id)
-//                   context.startActivity(intent)
+                        val intent = Intent(context, LogActivity::class.java)
+                        intent.putExtra("IdJadwal", jadwal.id)
+                        context.startActivity(intent)
                     },
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier.height(34.dp),
@@ -147,6 +149,8 @@ fun ItemJadwal(
                     onClick = {
                         // delete admin from firebase
                         jadwalViewModel.deleteJadwal(jadwal)
+                        val log = LogJadwal(idJadwal = jadwal.id)
+                        jadwalViewModel.deleteLog(log)
                         showDeleteDialog.value = false
                     },
                     colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)

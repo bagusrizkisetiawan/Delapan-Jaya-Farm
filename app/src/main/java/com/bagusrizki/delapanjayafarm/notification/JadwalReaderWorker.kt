@@ -3,6 +3,7 @@ package com.bagusrizki.delapanjayafarm.notification
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
@@ -13,7 +14,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -31,28 +35,23 @@ class JadwalReaderWorker(appContext: Context, workerParams: WorkerParameters) :
         // Menggunakan CountDownLatch untuk menunggu callback
         val latch = CountDownLatch(1)
 
-        database.addValueEventListener(object : ValueEventListener {
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (data in snapshot.children) {
                     val jadwal = data.getValue(Jadwal::class.java)
-                    if (jadwal != null) {
+                    if (jadwal != null && jadwal.jam.isNotEmpty()) {
                         jadwal.id = data.key ?: ""
-                        jadwals.add(jadwal)
-
-                        if (jadwal.jam.isNotEmpty()) {
-                            scheduleNotification(jadwal)
-                        }
+                        scheduleNotification(jadwal)
                     }
                 }
-                // Setelah selesai, lepaskan latch
                 latch.countDown()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Mengatasi error jika ada
                 latch.countDown()
             }
         })
+
 
         // Tunggu hingga data diambil
         latch.await()
@@ -84,8 +83,14 @@ class JadwalReaderWorker(appContext: Context, workerParams: WorkerParameters) :
             .setInitialDelay(triggerTime, TimeUnit.MILLISECONDS)
             .build()
 
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val workManager = WorkManager.getInstance()
-        workManager.enqueue(workRequest)
+        workManager.enqueueUniqueWork(
+            "jadwal_${jadwal.id}_${currentDate}", // unique name per jadwal
+            ExistingWorkPolicy.REPLACE, // REPLACE atau KEEP tergantung logikamu
+            workRequest
+        )
+
     }
 
     // Menghitung waktu tunda berdasarkan jadwal

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +26,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -446,24 +449,7 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
                             }
                         }
                         items(bobotList) { bobot ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp, vertical = 4.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "${bobot.bobot} Kg",
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                                Text(
-                                    text = bobot.tanggal,
-                                    fontSize = 12.sp,
-                                    color = Color.Gray
-                                )
-                            }
+                           ItemBobotSapi(bobot = bobot)
                         }
                         item {
                             Spacer(modifier = Modifier.height(12.dp))
@@ -506,4 +492,53 @@ fun ItemSapi(sapi: SapiDetail, sapiViewModel: SapiViewModel = viewModel()) {
         )
     }
 }
+
+
+@Composable
+fun ItemBobotSapi(bobot: BobotSapi, sapiViewModel: SapiViewModel = viewModel()){
+    val showDeleteBobot = remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = {
+                    showDeleteBobot.value = !showDeleteBobot.value
+                }
+            )
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row {
+            if (showDeleteBobot.value) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete_outline),
+                    contentDescription = null,
+                    tint = colorResource(R.color.danger),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            sapiViewModel.deleteBobot(bobot)
+                        }
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+            Text(
+                text = "${bobot.bobot} Kg",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+        }
+
+        Text(
+            text = bobot.tanggal,
+            fontSize = 12.sp,
+            color = Color.Gray
+        )
+    }
+}
+
+
+
 

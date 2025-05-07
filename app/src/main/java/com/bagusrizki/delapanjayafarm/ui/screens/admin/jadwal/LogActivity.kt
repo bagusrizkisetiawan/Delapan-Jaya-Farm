@@ -30,9 +30,12 @@ class LogActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val jadwalId = intent.getStringExtra("IdJadwal") ?: ""
+
         setContent {
             DelapanJayaFarmTheme {
-                LogScreen(onBackPressed = { finish() })
+                LogScreen(onBackPressed = { finish() }, idJadwal = jadwalId)
             }
         }
     }
@@ -42,21 +45,29 @@ class LogActivity : ComponentActivity() {
 @Composable
 fun LogScreen(
     onBackPressed: () -> Unit = {},
+    idJadwal: String,
     jadwalViewModel: JadwalViewModel = viewModel()
 ) {
 
     val logList = jadwalViewModel.logDetailList.collectAsState()
-    val logListSorted = logList.value.sortedBy { it.jadwal.jam }.sortedByDescending {
+    var logListSorted = logList.value.sortedBy { it.jadwal.jam }.sortedByDescending {
         SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(it.tanggal)
     }
 
+    if (idJadwal!=""){
+        logListSorted = logListSorted.filter {  it.jadwal.id == idJadwal }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
 
                 title = {
-                    Text("Aktivitas", fontSize = 20.sp)
+                    if (idJadwal != ""){
+                        Text("${logListSorted.firstOrNull()?.jadwal?.namaJadwal} Hari ini", fontSize = 20.sp)
+                    }else{
+                        Text("Seluruh Aktifitas", fontSize = 20.sp)
+                    }
                 },
                 navigationIcon = {
                     //
