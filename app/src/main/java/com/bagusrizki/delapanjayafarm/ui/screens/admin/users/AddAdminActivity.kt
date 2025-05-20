@@ -14,11 +14,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -32,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +69,9 @@ fun AddAdminScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
+
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -128,14 +135,18 @@ fun AddAdminScreen(
             Button(
                 onClick = {
                     loading = true
-                    // Add Admin to firebase
-                    val admin =
-                        Admin(nama = nama, username = username, password = password)
-                    usersViewModel.addAdmin(admin)
 
+                    if (nama.isEmpty() || username.isEmpty() || password.isEmpty()) {
+                        errorMessage = "Semua kolom harus diisi"
+                        showError = true
+                    } else {
+                        val admin =
+                            Admin(nama = nama, username = username, password = password)
+                        usersViewModel.addAdmin(admin)
+
+                        onBackPressed()
+                    }
                     loading = false
-                    // redirect finish activity
-                    onBackPressed()
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -149,6 +160,34 @@ fun AddAdminScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
+            }
+
+            if (showError) {
+                AlertDialog(
+                    onDismissRequest = { showError = false },
+                    title = {
+                        Text(
+                            text = "Gagal Simpan",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = errorMessage,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    confirmButton = {
+                    },
+                    icon = {
+
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
             }
         }
     }

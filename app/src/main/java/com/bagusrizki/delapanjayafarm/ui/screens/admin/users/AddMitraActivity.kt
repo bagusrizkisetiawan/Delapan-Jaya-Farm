@@ -15,11 +15,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +67,9 @@ fun AddMitraScreen(
     var noHp by remember { mutableStateOf("") }
     var alamat by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
+
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -152,20 +158,26 @@ fun AddMitraScreen(
             Button(
                 onClick = {
                     loading = true
-                    // Add Admin to firebase
-                    val mitra =
-                        Mitra(
-                            nama = nama,
-                            username = username,
-                            password = password,
-                            noHp = noHp,
-                            alamat = alamat
-                        )
-                    usersViewModel.addMitra(mitra)
+
+                    if (nama.isEmpty() || username.isEmpty() || password.isEmpty() || noHp.isEmpty() || alamat.isEmpty()) {
+                        errorMessage = "Semua kolom harus diisi"
+                        showError = true
+                    } else {
+                        val mitra =
+                            Mitra(
+                                nama = nama,
+                                username = username,
+                                password = password,
+                                noHp = noHp,
+                                alamat = alamat
+                            )
+                        usersViewModel.addMitra(mitra)
+                        onBackPressed()
+                    }
+
 
                     loading = false
-                    // redirect finish activity
-                    onBackPressed()
+
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -179,6 +191,34 @@ fun AddMitraScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
+            }
+
+            if (showError) {
+                AlertDialog(
+                    onDismissRequest = { showError = false },
+                    title = {
+                        Text(
+                            text = "Gagal Simpan",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = errorMessage,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    },
+                    confirmButton = {
+                    },
+                    icon = {
+
+                    },
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(16.dp)
+                )
             }
         }
     }

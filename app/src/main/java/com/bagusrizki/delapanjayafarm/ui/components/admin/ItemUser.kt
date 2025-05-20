@@ -119,7 +119,11 @@ fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = viewModel()) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog.value = false },
             title = {
-                Text(text = "Konfirmasi Hapus")
+                Text(
+                    text = "Konfirmasi Hapus",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
             },
             text = {
                 Text(text = "Apakah Anda yakin ingin menghapus admin ${admin.nama}?")
@@ -149,13 +153,17 @@ fun ItemAdmin(admin: Admin, usersViewModel: UsersViewModel = viewModel()) {
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = viewModel(),  sapiViewModel: SapiViewModel= viewModel()) {
+fun ItemMitra(
+    mitra: Mitra,
+    usersViewModel: UsersViewModel = viewModel(),
+    sapiViewModel: SapiViewModel = viewModel()
+) {
     val context = LocalContext.current
 
     var isExpanded = remember { mutableStateOf(false) }
     var showDeleteDialog = remember { mutableStateOf(false) }
 
-    val sapiList = sapiViewModel.sapiList.collectAsState().value.filter { it.idMitra == mitra.id}
+    val sapiList = sapiViewModel.sapiList.collectAsState().value.filter { it.idMitra == mitra.id }
 
     Row(
         modifier = Modifier
@@ -246,7 +254,11 @@ fun ItemMitra(mitra: Mitra, usersViewModel: UsersViewModel = viewModel(),  sapiV
         AlertDialog(
             onDismissRequest = { showDeleteDialog.value = false },
             title = {
-                Text(text = "Konfirmasi Hapus")
+                Text(
+                    text = "Konfirmasi Hapus",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
             },
             text = {
                 Text(text = "Apakah Anda yakin ingin menghapus mitra ${mitra.nama}?")

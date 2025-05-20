@@ -23,6 +23,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -31,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -212,16 +217,28 @@ fun MyLogin(
                             errorMessage = "Username dan password tidak boleh kosong"
                             showError = true
                         }
+
                         else -> {
-                            val admin = adminList.find { it.username == username && it.password == password }
-                            val mitra = mitraList.find { it.username == username && it.password == password }
+                            val admin =
+                                adminList.find { it.username == username && it.password == password }
+                            val mitra =
+                                mitraList.find { it.username == username && it.password == password }
 
                             if (admin != null) {
                                 loginViewModel.saveUser(admin.id, "admin")
                             } else if (mitra != null) {
                                 loginViewModel.saveUser(mitra.id, "mitra")
                             } else {
-                                errorMessage = "Username atau password salah"
+
+                                val usernameExistsInAdmin =
+                                    adminList.any { it.username == username }
+                                val usernameExistsInMitra =
+                                    mitraList.any { it.username == username }
+
+                                errorMessage = when {
+                                    usernameExistsInAdmin || usernameExistsInMitra -> "Password salah"
+                                    else -> "Username tidak ditemukan"
+                                }
                                 showError = true
                             }
                         }
@@ -243,11 +260,32 @@ fun MyLogin(
         if (showError) {
             AlertDialog(
                 onDismissRequest = { showError = false },
-                title = { Text("Login Gagal") },
-                text = { Text(errorMessage) },
+                title = {
+                    Text(
+                        text = "Login Gagal",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                },
+                text = {
+                    Text(
+                        text = errorMessage,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
                 confirmButton = {
-
-                }
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                },
+                containerColor = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(16.dp)
             )
         }
     }
